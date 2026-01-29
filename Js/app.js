@@ -1,23 +1,51 @@
-const states = {
-    apple: 5
+const fruitStates = {
+    apple: 5,
+    orange:10
 }
 
-const reducer = (state = states, action) => {
+const foodStates = {
+    sandwich: 15
+}
+
+const fruitReducer = (state = fruitStates, action) => {
     switch (action.type) {
         case "BUY_APPLE":
-            return {apple: state.apple - 1}                
+            return {...state, apple:state.apple - 1}
+        case "BUY_ORANGE":
+            return {...state, orange:state.orange - 1}
         default:
             return state
     }
 }
 
-const store = Redux.createStore(reducer);
+const foodReducer = (state = foodStates, action) => {
+    switch (action.type) {
+        case "BUY_SANDWICH":
+            return {...state, sandwich:state.sandwich - 1}
+        default:
+            return state
+    }
+}
+
+const rootReducer = Redux.combineReducers({
+    fruit: fruitReducer,
+    food: foodReducer
+})
+
+const store = Redux.createStore(rootReducer);
 
 // console.log(store.getState());
 
+const render = () => {
+    console.log(store.getState());    
+    document.getElementById('orange_count').innerHTML = "Orahge Count:" + store.getState().fruit.orange
+    document.getElementById('apple_count').innerHTML = "Apples Count:" + store.getState().fruit.apple
+    document.getElementById('sandwich_count').innerHTML = "Sandwich Count:" + store.getState().food.sandwich
+}
+
 store.subscribe(() => {
     // console.log(store.getState());
-    document.getElementById('apple_count').innerHTML = "Apples Count:" + store.getState().apple
+    render()
 })
 
 // store.dispatch({type: "BUY_APPLE"})
@@ -29,4 +57,12 @@ document.getElementById('buy_apple').addEventListener('click',()=>{
     store.dispatch({type: "BUY_APPLE"})
 })
 
-document.getElementById('apple_count').innerHTML = "Apples Count:" + store.getState().apple
+document.getElementById('buy_orange').addEventListener('click', ()=>{
+    store.dispatch({type: "BUY_ORANGE"})
+})
+
+document.getElementById('buy_sandwich').addEventListener('click', ()=>{
+    store.dispatch({type: "BUY_SANDWICH"})
+})
+
+render()
